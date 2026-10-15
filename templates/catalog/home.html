@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="p-4 p-md-5 mb-4 bg-dark text-white rounded-3">
+  <h1 class="display-6 fw-bold">Linh kiện PC chính hãng</h1>
+  <p class="lead mb-3">CPU, VGA, RAM, SSD, Mainboard, Nguồn... Lọc theo hãng, khoảng giá, tồn kho cập nhật theo thời gian thực.</p>
+  <a class="btn btn-danger" href="{% url 'catalog:product_list' %}">Xem tất cả sản phẩm</a>
+</div>
+
+<h5 class="mb-3">Danh mục</h5>
+<div class="row g-2 mb-4">
+  {% for c in categories %}
+  <div class="col-6 col-md-2"><a class="btn btn-outline-dark w-100" href="{{ c.get_absolute_url }}">{{ c.name }}</a></div>
+  {% endfor %}
+</div>
+
+<h5 class="mb-3">Sản phẩm mới</h5>
+<div class="row g-3 mb-4">{% for p in latest %}{% include "partials/product_card.html" %}{% empty %}<p class="text-muted">Chưa có sản phẩm. Chạy <code>python manage.py seed_data</code> để tạo dữ liệu mẫu.</p>{% endfor %}</div>
+
+{% if bestsellers %}
+<h5 class="mb-3">Đang còn nhiều hàng</h5>
+<div class="row g-3">{% for p in bestsellers %}{% include "partials/product_card.html" %}{% endfor %}</div>
+{% endif %}
+{% endblock %}

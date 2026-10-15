@@ -1,0 +1,11 @@
+{% extends "dashboard/layout.html" %}
+{% block dash %}
+<h5 class="mb-3">{{ title }}</h5>
+<form method="post" enctype="multipart/form-data" class="card card-body shadow-sm" novalidate>{% csrf_token %}
+  {% include "partials/form_fields.html" %}
+  <div>
+    <button class="btn btn-danger">Lưu</button>
+    <a class="btn btn-outline-secondary" href="{% url 'dashboard:product_list' %}">Hủy</a>
+  </div>
+</form>
+{% endblock %}

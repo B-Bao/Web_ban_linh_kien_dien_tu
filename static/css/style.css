@@ -1,0 +1,9 @@
+body { background: #f6f7f9; }
+.product-card img { height: 180px; object-fit: contain; background: #fff; padding: 8px; }
+.product-card .card-title { font-size: .95rem; min-height: 2.6em; }
+.price { color: #d70018; font-weight: 700; }
+.stars { color: #f5a623; letter-spacing: 1px; }
+.spec-table th { width: 35%; background: #f1f3f5; font-weight: 600; }
+.navbar-brand { font-weight: 800; letter-spacing: .5px; }
+.footer { color: #6c757d; font-size: .9rem; }
+.qty-input { width: 90px; }

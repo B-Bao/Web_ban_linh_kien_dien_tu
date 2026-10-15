@@ -1,0 +1,5 @@
+Django>=4.2,<6.0
+djangorestframework>=3.15
+Pillow>=10.0
+# Chỉ cần khi chuyển sang PostgreSQL (đặt biến môi trường DB_ENGINE=postgres):
+# psycopg2-binary>=2.9

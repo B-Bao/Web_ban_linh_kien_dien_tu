@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Quản trị · PCShop{% endblock %}
+{% block content %}
+<ul class="nav nav-pills mb-4">
+  <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'dashboard:index' %}">Tổng quan</a></li>
+  <li class="nav-item"><a class="nav-link {% if 'product' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'dashboard:product_list' %}">Sản phẩm</a></li>
+  <li class="nav-item"><a class="nav-link {% if 'category' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'dashboard:category_list' %}">Danh mục</a></li>
+  <li class="nav-item"><a class="nav-link {% if 'order' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'dashboard:order_list' %}">Đơn hàng</a></li>
+  <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Django Admin</a></li>
+</ul>
+{% block dash %}{% endblock %}
+{% endblock %}

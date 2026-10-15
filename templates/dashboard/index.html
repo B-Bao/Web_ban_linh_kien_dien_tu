@@ -1,0 +1,63 @@
+{% extends "dashboard/layout.html" %}
+{% load shop_extras %}
+{% block dash %}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="card card-body shadow-sm"><div class="text-muted small">Doanh thu (đơn hoàn thành)</div><div class="fs-5 price">{{ total_revenue|vnd }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card card-body shadow-sm"><div class="text-muted small">Tổng đơn hàng</div><div class="fs-4">{{ total_orders }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card card-body shadow-sm"><div class="text-muted small">Đơn chờ xác nhận</div><div class="fs-4 text-warning">{{ pending_orders }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card card-body shadow-sm"><div class="text-muted small">Sản phẩm / Khách hàng</div><div class="fs-4">{{ total_products }} / {{ total_customers }}</div></div></div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-8"><div class="card card-body shadow-sm">
+    <div class="d-flex justify-content-between"><h6>Doanh thu 30 ngày gần nhất</h6>
+      <select id="range" class="form-select form-select-sm w-auto"><option value="7">7 ngày</option><option value="30" selected>30 ngày</option><option value="90">90 ngày</option></select></div>
+    <canvas id="revenueChart" height="110"></canvas>
+  </div></div>
+  <div class="col-lg-4"><div class="card card-body shadow-sm">
+    <h6>Top sản phẩm bán chạy</h6>
+    <canvas id="topChart" height="200"></canvas>
+  </div></div>
+</div>
+
+<div class="row g-3 mt-1">
+  <div class="col-lg-6"><div class="card card-body shadow-sm"><h6>Đơn hàng theo trạng thái</h6>
+    <ul class="list-group list-group-flush">
+      {% for label, count, value in status_counts %}<li class="list-group-item d-flex justify-content-between"><a href="{% url 'dashboard:order_list' %}?status={{ value }}">{{ label }}</a><span class="badge text-bg-dark">{{ count }}</span></li>{% endfor %}
+    </ul></div></div>
+  <div class="col-lg-6"><div class="card card-body shadow-sm"><h6>Sắp hết hàng</h6>
+    <ul class="list-group list-group-flush">
+      {% for p in low_stock %}<li class="list-group-item d-flex justify-content-between"><a href="{% url 'dashboard:product_update' p.pk %}">{{ p.name }}</a><span class="badge text-bg-{% if p.stock == 0 %}danger{% else %}warning{% endif %}">{{ p.stock }}</span></li>
+      {% empty %}<li class="list-group-item text-muted">Không có sản phẩm nào sắp hết.</li>{% endfor %}
+    </ul></div></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+  let revenueChart, topChart;
+  async function loadRevenue(days) {
+    const data = await (await fetch(`/api/dashboard/revenue/?days=${days}`)).json();
+    if (revenueChart) revenueChart.destroy();
+    revenueChart = new Chart(document.getElementById("revenueChart"), {
+      type: "bar",
+      data: { labels: data.labels, datasets: [{ label: "Doanh thu (₫)", data: data.revenue, backgroundColor: "#d70018" }] },
+      options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } },
+    });
+  }
+  async function loadTop() {
+    const data = await (await fetch("/api/dashboard/top-products/?limit=5")).json();
+    topChart = new Chart(document.getElementById("topChart"), {
+      type: "bar",
+      data: { labels: data.map((d) => d.name), datasets: [{ label: "Số lượng bán", data: data.map((d) => d.quantity), backgroundColor: "#212529" }] },
+      options: { indexAxis: "y", plugins: { legend: { display: false } } },
+    });
+  }
+  document.getElementById("range").addEventListener("change", (e) => loadRevenue(e.target.value));
+  loadRevenue(30);
+  loadTop();
+})();
+</script>
+{% endblock %}
